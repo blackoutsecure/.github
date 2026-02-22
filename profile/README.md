@@ -1,12 +1,18 @@
-## Hi there 👋
+# Blackout Secure
 
-<!--
+Blackout Secure delivers expert cybersecurity, cloud, and secure development
+solutions backed by 20+ years of Fortune-level experience. We build safer systems
+and train stronger teams.
 
-**Here are some ideas to get you started:**
+## Focus areas
 
-🙋‍♀️ A short introduction - what is your organization all about?
-🌈 Contribution guidelines - how can the community get involved?
-👩‍💻 Useful resources - where can the community find your docs? Is there anything else the community should know?
-🍿 Fun facts - what does your team eat for breakfast?
-🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
--->
+- Security engineering and architecture
+- Cloud security and hardening
+- Secure software development practices
+- Training and enablement for engineering teams
+
+## Get in touch
+
+- Website: https://blackoutsecure.app
+- Sponsors: https://github.com/sponsors/blackoutsecure
+- Security policy: https://github.com/blackoutsecure/.github/security/policy

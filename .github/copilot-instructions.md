@@ -56,9 +56,24 @@ Copilot should:
   - `README.md`
   - `SECURITY.md`
   - `CONTRIBUTING.md`
+  - `CODE_OF_CONDUCT.md`
+  - `SUPPORT.md`
+  - `FUNDING.yml`
   - Issue templates
   - PR templates
 - Encourage modular, testable code organization.
+
+### Funding Source of Truth
+
+GitHub documentation is the source of truth for sponsor and funding links:
+https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+`FUNDING.yml` is the implementation point for sponsor and funding links. If updates
+are needed, edit that file directly. Example:
+
+```
+custom: ["https://www.paypal.me/octocat", octocat.com]
+```
 
 ---
 
