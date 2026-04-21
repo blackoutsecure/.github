@@ -1,0 +1,54 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+  workflow_dispatch:
+    inputs:
+      push:
+        description: 'Push images to the registry (false = build/validate only)'
+        type: boolean
+        default: true
+      image_version:
+        description: 'Image version tag (e.g. "1.2.3"). Blank => auto-resolved from Dockerfile/VERSION/SHA.'
+        type: string
+        default: ''
+      extra_tags:
+        description: 'Newline-separated extra tags (e.g. "sha-abc123")'
+        type: string
+        default: ''
+      latest:
+        description: 'Also tag the manifest as :latest when pushing'
+        type: boolean
+        default: true
+      multi_arch:
+        description: 'Build all platforms (amd64 + arm64). When false, only amd64 is built.'
+        type: boolean
+        default: true
+      runner_type:
+        description: 'Runner pool: cloud (GitHub-hosted) or self-hosted.'
+        type: choice
+        options: [cloud, self-hosted]
+        default: cloud
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+
+jobs:
+  docker:
+    uses: blackoutsecure/platform-automation/.github/workflows/docker-build-push.yml@main
+    with:
+      image_name:    ${{ vars.IMAGE_NAME }}
+      push:          ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.push) || '' }}
+      image_version: ${{ inputs.image_version || '' }}
+      extra_tags:    ${{ inputs.extra_tags    || '' }}
+      latest:        ${{ github.event_name != 'workflow_dispatch' || inputs.latest }}
+      multi_arch:    ${{ github.event_name != 'workflow_dispatch' || inputs.multi_arch }}
+      runner_type:   ${{ inputs.runner_type || 'cloud' }}
+    secrets: inherit
