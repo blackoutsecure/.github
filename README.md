@@ -20,5 +20,7 @@ it should add its own versions of those files.
 
 - Website: https://blackoutsecure.app
 - Sponsors: https://github.com/sponsors/blackoutsecure
-- Security policy: SECURITY.md
-- Support: SUPPORT.md
+- Security policy: [SECURITY.md](SECURITY.md)
+- Support: [SUPPORT.md](SUPPORT.md)
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)

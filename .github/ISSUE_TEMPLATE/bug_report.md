@@ -1,6 +1,6 @@
 ---
 name: Bug report
-description: Report a problem or regression
+about: Report a problem or regression
 labels: ["bug"]
 ---
 
@@ -33,7 +33,4 @@ labels: ["bug"]
 - [ ] Possible security impact (explain below)
 
 ## Additional context
-- 
-
-## Impact
 - 

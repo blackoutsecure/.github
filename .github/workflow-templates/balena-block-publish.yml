@@ -1,59 +1,57 @@
+# Publish a Balena block via the org's reusable workflow.
+#
+# Required repo configuration:
+#   vars     BALENA_BLOCK_NAME    Block slug (without namespace)
+#            BALENA_NAMESPACE     Balena user/org that owns the block
+#   secrets  BALENA_API_TOKEN     balenaCloud API token
 name: Balena Block Publish
 
 on:
   push:
     branches: [$default-branch]
-  pull_request:
-    branches: [$default-branch]
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish to balenaCloud (false = resolve/validate only)'
+        description: Publish to balenaCloud (false = resolve/validate only).
         type: boolean
-        default: true
+        default: false
       version:
-        description: 'Block version (e.g. "1.2.3"). Blank => auto-resolved from Dockerfile/VERSION/SHA.'
+        description: 'Block version (e.g. "1.2.3"). Blank => auto-resolved.'
         type: string
         default: ''
       sync_balena_yml:
-        description: 'Rewrite the top-level `version:` in balena.yml and commit it back when publishing.'
+        description: Rewrite balena.yml `version:` and commit it back when publishing.
         type: boolean
         default: true
       draft:
-        description: 'Publish as a draft release (sets finalize=false)'
+        description: Publish as a draft release (finalize=false).
         type: boolean
         default: false
       debug:
-        description: 'Forwarded to deploy-to-balena-action `debug`'
+        description: Verbose deploy-to-balena-action logging.
         type: boolean
         default: false
-      runs_on:
-        description: 'Runner label for the publish job'
-        type: choice
-        options: [ubuntu-latest, ubuntu-latest-arm64]
-        default: ubuntu-latest
 
 permissions:
   contents: read
 
+# balenaCloud rejects concurrent pushes to the same block.
 concurrency:
-  # balenaCloud rejects concurrent pushes to the same block; do not cancel in-progress runs.
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: balena-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   balena:
-    # `sync_balena_yml` (default true) commits a version bump back to the default branch.
     permissions:
       contents: write
     uses: blackoutsecure/platform-automation/.github/workflows/balena-block-publish.yml@main
     with:
-      block_name:        ${{ vars.BALENA_BLOCK_NAME }}
-      balena_namespace:  ${{ vars.BALENA_NAMESPACE }}
-      publish:           ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.publish) || '' }}
-      version:           ${{ inputs.version || '' }}
-      sync_balena_yml:   ${{ github.event_name != 'workflow_dispatch' || inputs.sync_balena_yml }}
-      draft:             ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
-      debug:             ${{ github.event_name == 'workflow_dispatch' && inputs.debug || false }}
-      runs_on:           ${{ inputs.runs_on || 'ubuntu-latest' }}
-    secrets: inherit
+      block_name:       ${{ vars.BALENA_BLOCK_NAME }}
+      balena_namespace: ${{ vars.BALENA_NAMESPACE }}
+      publish:          ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.publish) || '' }}
+      version:          ${{ inputs.version || '' }}
+      sync_balena_yml:  ${{ github.event_name != 'workflow_dispatch' || inputs.sync_balena_yml }}
+      draft:            ${{ github.event_name == 'workflow_dispatch' && inputs.draft || false }}
+      debug:            ${{ github.event_name == 'workflow_dispatch' && inputs.debug || false }}
+    secrets:
+      BALENA_API_TOKEN: ${{ secrets.BALENA_API_TOKEN }}
