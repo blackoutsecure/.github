@@ -1,25 +1,66 @@
 # blackoutsecure .github
 
-This repository contains the organization-wide community health files and shared
-policies for blackoutsecure.
+Organization-wide community-health defaults for the blackoutsecure
+GitHub organization. Files here are inherited automatically by every
+repo in the org that does NOT supply its own version.
 
-## What this repo contains
+## What lives here
 
-- Default issue templates and PR template in `.github/`
-- Security policy, support guidance, and contribution standards
-- Organization Copilot instructions for consistent coding practices
-- Funding configuration for GitHub Sponsors
+| File / folder                          | Purpose                                          |
+|----------------------------------------|--------------------------------------------------|
+| `CODE_OF_CONDUCT.md`                   | Default code of conduct                          |
+| `CONTRIBUTING.md`                      | Default contribution guidance                    |
+| `SECURITY.md`                          | Default security policy + reporting flow         |
+| `SUPPORT.md`                           | Default support guidance                         |
+| `FUNDING.yml`                          | Default GitHub Sponsors / funding links          |
+| `.github/ISSUE_TEMPLATE/`              | Default bug + feature-request templates + config |
+| `.github/PULL_REQUEST_TEMPLATE.md`     | Default PR template                              |
+| `profile/README.md`                    | Org profile page (rendered on the org landing)   |
 
-## How it applies across repositories
+These files are intentionally generic so they apply across the board
+— for public repositories, published GitHub Marketplace actions, and
+internal-leaning public repos alike. Per-repo specifics (release
+process, tool surface, branching strategy, etc.) belong in each
+repo's own `README.md` or a repo-local override of the file in
+question.
 
-GitHub automatically uses the files in this repository for any organization repo
-that does not override them locally. If a repo needs custom templates or policies,
-it should add its own versions of those files.
+## How GitHub's inheritance works
+
+GitHub applies a community-health file from this `.github` repo to a
+sibling repo when **all** of the following are true:
+
+1. The repo does NOT define its own copy of the file (either at the
+   repo root or under its own `.github/` folder).
+2. The file is one of the inheritable types in the table above.
+
+If a repo defines its own file, GitHub uses that one verbatim — the
+org default is ignored for that repo (no merging).
+
+### What does NOT inherit
+
+These are per-repo by design and must live inside the consuming repo
+itself:
+
+- `.github/workflows/**` — workflows do not inherit.
+- `.github/dependabot.yml` — Dependabot config is per-repo.
+- `.github/CODEOWNERS` — code-owner rules are per-repo.
+- `LICENSE`, `NOTICE`, repo `README.md` — per-repo.
+- Branch protection, repo settings, secrets — per-repo / org config.
+
+## Conventions for repos in this org
+
+- Prefer the inherited defaults. Override locally only when a repo
+  genuinely needs a different policy (e.g. a CONTRIBUTING.md that
+  documents a repo-specific release flow).
+- Never commit secrets, internal URLs, customer data, or PII to any
+  file in this repo or to the override files in any public repo.
+- For security reports, route through the per-repo Security Advisory
+  workflow when available; otherwise fall back to the policy here.
 
 ## Links
 
-- Website: https://blackoutsecure.app
-- Sponsors: https://github.com/sponsors/blackoutsecure
+- Website: <https://blackoutsecure.app>
+- Sponsors: <https://github.com/sponsors/blackoutsecure>
 - Security policy: [SECURITY.md](SECURITY.md)
 - Support: [SUPPORT.md](SUPPORT.md)
 - Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
