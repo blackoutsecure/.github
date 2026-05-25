@@ -47,6 +47,26 @@ itself:
 - `LICENSE`, `NOTICE`, repo `README.md` — per-repo.
 - Branch protection, repo settings, secrets — per-repo / org config.
 
+## Hygiene for this repo itself
+
+This repo also ships its own dev-hygiene configuration so it
+dogfoods the standards the
+[`bos-marketplace-kit`](https://github.com/blackoutsecure/bos-marketplace-kit)
+hygiene rules (`DP001`, `LT001`–`LT005`) recommend for consumers.
+These files apply only to THIS repo — they are NOT inherited by
+sibling repos (GitHub's inheritance contract above covers only the
+community-health surface):
+
+| File                          | Purpose                                                    |
+|-------------------------------|------------------------------------------------------------|
+| `.github/dependabot.yml`      | Weekly bumps for any future `github-actions` workflows     |
+| `.github/CODEOWNERS`          | Required maintainer review on community-health changes     |
+| `.editorconfig`               | Indentation / encoding / EOL defaults                      |
+| `.gitattributes`              | Force LF line endings + tag common binary types            |
+| `.gitignore`                  | Ignore editor noise, OS noise, env files, private keys     |
+| `.markdownlint.yaml`          | Markdown lint settings tuned for community-health docs     |
+| `.yamllint.yml`               | YAML lint settings tuned for community-health + workflows  |
+
 ## Conventions for repos in this org
 
 - Prefer the inherited defaults. Override locally only when a repo

@@ -1,0 +1,40 @@
+# yamllint configuration for the blackoutsecure/.github org-default repo.
+#
+# Optimised for GitHub Actions YAML which uses:
+#   * Long inline expressions (${{ ... }}) — line-length relaxed.
+#   * The `on:` key which yamllint reads as a truthy alias — relaxed.
+#   * Both flow- and block-style mappings — relaxed.
+#
+# Mirrors src/marketplace_kit/data/policies/yamllint.yml in the
+# bos-marketplace-kit. Keep in sync when the kit template evolves.
+
+extends: default
+
+ignore: |
+  .git/
+  .venv/
+  node_modules/
+  dist/
+
+rules:
+  line-length:
+    max: 200
+    level: warning
+
+  truthy:
+    allowed-values: ["true", "false", "on", "off", "yes", "no"]
+    check-keys: false
+
+  braces:
+    level: warning
+
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1
+
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+    check-multi-line-strings: false
+
+  document-start: disable

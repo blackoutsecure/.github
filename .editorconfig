@@ -1,0 +1,19 @@
+root = true
+
+# Org-default `.editorconfig` for the `blackoutsecure/.github` repo.
+# Repos in the org should ship their OWN `.editorconfig` (the kit's
+# `LT001` rule is local-file-only by design — editor tooling does not
+# walk org-default fallbacks the way GitHub does for community-health
+# files). This file just keeps the `.github` repo itself consistent.
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Markdown trailing whitespace is significant (two-space line breaks).
+[*.md]
+trim_trailing_whitespace = false

@@ -1,0 +1,33 @@
+# Dependabot configuration for the org-default `.github` repo.
+#
+# This repo ships only Markdown + YAML community-health files. There
+# is no Python, Node, Docker, or Go content, so the only ecosystem
+# that meaningfully applies is `github-actions` (which will start
+# producing PRs the moment a workflow is added under
+# `.github/workflows/`).
+#
+# Keeping this file present even when there are no workflows yet is
+# intentional — it satisfies the kit's `require_dependabot` (DP001)
+# rule under `community_health_source: inherit` so consumer repos
+# can point their kit `check` at the org default with no surprises.
+#
+# Reference:
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: scope
+    labels:
+      - dependencies
+      - ci

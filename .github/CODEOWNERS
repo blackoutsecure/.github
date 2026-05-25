@@ -1,0 +1,26 @@
+# CODEOWNERS for the blackoutsecure/.github org-default repo.
+#
+# Scope: this CODEOWNERS file governs reviews on THIS repo only.
+# GitHub does NOT inherit CODEOWNERS across repos in an organization —
+# each repo in `blackoutsecure` declares its own owners. Use this file
+# to require maintainer review on changes to the org-default
+# community-health files that flow out to every consumer repo via
+# `community_health_source: inherit`.
+#
+# Reference:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything.
+*                               @blackoutsecure
+
+# Community-health files inherited org-wide — extra scrutiny.
+/CODE_OF_CONDUCT.md             @blackoutsecure
+/CONTRIBUTING.md                @blackoutsecure
+/SECURITY.md                    @blackoutsecure
+/SUPPORT.md                     @blackoutsecure
+/FUNDING.yml                    @blackoutsecure
+/.github/ISSUE_TEMPLATE/        @blackoutsecure
+/.github/PULL_REQUEST_TEMPLATE.md @blackoutsecure
+
+# Org public profile page.
+/profile/README.md              @blackoutsecure
