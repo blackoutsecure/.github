@@ -27,7 +27,8 @@ on:
       - 'root/**'
       - 'build/**'
       - 'scripts/**'
-      - '.github/upstream/**'
+      - '.github/tracked-release.json'
+      - '.github/bos-universal-config.json'
       - 'bos-launchpad-config.json'
       - 'bos-managed-files.yaml'
       - '.github/workflows/bos-universal-launchpad-kicker.yml'
@@ -90,7 +91,7 @@ jobs:
       package_name:      ${{ fromJson(needs.parse-config.outputs.cfg).upstream.package_name || '' }}
       version_url:       ${{ fromJson(needs.parse-config.outputs.cfg).upstream.version_url || '' }}
       tag_pattern:       ${{ fromJson(needs.parse-config.outputs.cfg).upstream.tag_pattern || '' }}
-      track_file:        ${{ fromJson(needs.parse-config.outputs.cfg).upstream.track_file || '.github/upstream/tracked-release.json' }}
+      track_file:        ${{ fromJson(needs.parse-config.outputs.cfg).upstream.track_file || '.github/tracked-release.json' }}
       force_run: ${{ (github.event_name == 'push' && fromJson(needs.parse-config.outputs.cfg).triggers.force_on_push == true) || (github.event_name == 'workflow_dispatch' && inputs.force_run) }}
 
       docker:           ${{ fromJson(needs.parse-config.outputs.cfg).stages.docker == true }}
