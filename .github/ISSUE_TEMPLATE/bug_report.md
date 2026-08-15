@@ -7,16 +7,16 @@ labels: ["bug"]
 # Summary
 
 ## Impact
-- 
+-
 
 ## Expected behavior
 
 ## Actual behavior
 
 ## Steps to reproduce
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Reproducibility
 - [ ] Always
@@ -33,4 +33,4 @@ labels: ["bug"]
 - [ ] Possible security impact (explain below)
 
 ## Additional context
-- 
+-

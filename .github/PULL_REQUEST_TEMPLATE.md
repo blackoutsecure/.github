@@ -8,13 +8,13 @@
 - [ ] Build/CI
 
 ## What changed
-- 
+-
 
 ## Why
-- 
+-
 
 ## How to test
-- 
+-
 
 ## Security impact
 - [ ] No security impact

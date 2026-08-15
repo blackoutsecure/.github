@@ -2,7 +2,8 @@
   "sync_files": {
     "services": [
       "common",
-      "lf_line_endings"
+      "lf_line_endings",
+      "org_defaults"
     ]
   }
 }
