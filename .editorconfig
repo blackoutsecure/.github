@@ -6,6 +6,11 @@ root = true
 # walk org-default fallbacks the way GitHub does for community-health
 # files). This file just keeps the `.github` repo itself consistent.
 
+
+# Markdown trailing whitespace is significant (two-space line breaks).
+
+# >>> managed-file-sync:editorconfig >>>
+# Managed by Blackout Secure Managed File Sync — configure services in .github/bos-universal-config.json.
 [*]
 charset = utf-8
 end_of_line = lf
@@ -14,6 +19,12 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-# Markdown trailing whitespace is significant (two-space line breaks).
+[*.py]
+indent_size = 4
+
 [*.md]
 trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
+# <<< managed-file-sync:editorconfig <<<

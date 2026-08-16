@@ -1,24 +1,17 @@
-# markdownlint configuration for the blackoutsecure/.github org-default repo.
-#
-# Tuned for community-health Markdown files which:
-#   * Include long URLs / inline code blocks (so MD013 line-length is off).
-#   * Legitimately repeat sub-section headings (so MD024 allows siblings_only).
-#   * Use GitHub admonitions like `> [!NOTE]` (so MD028 is off).
-#   * Use inline HTML for badges, <details>, <kbd> (so MD033 is off).
-#   * Use markdown links without angle brackets (so MD034 is off).
-#   * Don't always start with H1 (templates may open at H2 — MD041 off).
-#
-# Mirrors src/marketplace_kit/data/policies/markdownlint.yaml in the
-# bos-marketplace-kit. Keep in sync when the kit template evolves.
-
+# Managed by Blackout Secure Managed File Sync — configure services in .github/bos-universal-config.json.
+# Do not edit — every sync run overwrites this file.
 default: true
 
+# Long URLs and code snippets are common in docs-heavy repos.
 MD013: false
 
 MD024:
   siblings_only: true
 
+# GitHub admonitions and inline HTML are intentionally used.
 MD028: false
 MD033: false
 MD034: false
+
+# Templates/release notes may start at H2.
 MD041: false

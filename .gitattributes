@@ -1,5 +1,4 @@
 # Normalize all text files to LF on checkout and in the index.
-* text=auto eol=lf
 
 # Explicit binary types (defensive — git usually auto-detects).
 *.png  binary
@@ -9,3 +8,16 @@
 *.webp binary
 *.ico  binary
 *.pdf  binary
+
+# >>> managed-file-sync:lf_line_endings >>>
+# Managed by Blackout Secure Managed File Sync — configure services in .github/bos-universal-config.json.
+* text=auto eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+# <<< managed-file-sync:lf_line_endings <<<
