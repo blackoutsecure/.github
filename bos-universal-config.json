@@ -1,0 +1,23 @@
+{
+  "managed_file_sync": {
+    "services": [
+      "bos_universal_launchpad_kicker",
+      "org_defaults"
+    ]
+  },
+  "launchpad": {
+    "stages": {
+      "docker": false,
+      "balena": false,
+      "github_release": false,
+      "companion_docker": false,
+      "cloudflare_pages": false
+    },
+    "security_scan": {
+      "enable": false
+    },
+    "repo_metadata": {
+      "enable": false
+    }
+  }
+}

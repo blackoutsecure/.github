@@ -43,8 +43,19 @@ permissions:
   contents: read
 
 jobs:
+  sync-check:
+    name: Sync managed Launchpad files
+    permissions:
+      contents: write
+    uses: blackoutsecure/bos-automation-hub/.github/workflows/bos-universal-sync.yml@main
+    with:
+      mode: commit
+    secrets: inherit
+
   parse-config:
     name: Parse launchpad config
+    needs: sync-check
+    if: needs.sync-check.result == 'success'
     # Resolve runner from org-shared `vars.DEFAULT_RUNNER` when set,
     # supporting both bare label and JSON-array formats. Fallback to
     # `ubuntu-latest` if the variable is not defined in the consumer.
