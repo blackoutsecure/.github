@@ -59,12 +59,12 @@ jobs:
           persist-credentials: false
       - name: Read launchpad config JSON
         id: config
-        uses: blackoutsecure/bos-automation-hub/.github/actions/shared/launchpad-config@main
-
-      - name: Summarize launchpad config
-        uses: blackoutsecure/bos-automation-hub/.github/actions/summarize-launchpad-config@main
+        uses: blackoutsecure/bos-automation-hub/.github/actions/shared/launchpad@main
         with:
-          cfg_json: ${{ steps.config.outputs.cfg }}
+          config_path: .github/bos-universal-config.json
+          event_name: ${{ github.event_name }}
+          base_ref: ${{ github.base_ref }}
+          ref_name: ${{ github.ref_name }}
 
   release:
     name: Release
