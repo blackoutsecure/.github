@@ -1,5 +1,3 @@
-<!-- Managed by Blackout Secure Managed File Sync — configure services in .github/bos-universal-config.json. -->
-<!-- Do not edit — every sync run overwrites this file. -->
 ---
 name: Bug report
 about: Report a problem or regression
