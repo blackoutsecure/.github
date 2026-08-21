@@ -1,7 +1,7 @@
 {
   "managed_file_sync": {
     "services": [
-      "bos_universal_launchpad_kicker",
+      "bos_universal_gatekeeper_kicker",
       "org_defaults"
     ]
   },
