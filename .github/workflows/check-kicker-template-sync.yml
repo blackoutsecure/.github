@@ -1,0 +1,76 @@
+# Hub-only maintenance check (this repo is its own maintainer, not
+# hub-managed like the two sync/security kickers alongside it).
+#
+# workflow-templates/bos-workflow-gatekeeper-kicker.yml is a checked-in copy
+# of blackoutsecure/bos-workflow-gatekeeper's examples/kicker.yml, adapted
+# only in its header comment for the org-template audience. There is no
+# automated sync between the two repos (bos-automation-hub's managed-file
+# sync flows hub -> many consumer repos; this is a different repo relaying
+# a third repo's file, which is a different shape of problem) — this check
+# is the guardrail instead: it fails CI when the functional shape (`on`,
+# `permissions`, `jobs`) of the two files diverges, while still allowing the
+# header comments to differ intentionally.
+name: Check kicker template sync
+
+on:
+  push:
+    branches: [main]
+    paths: ['workflow-templates/bos-workflow-gatekeeper-kicker.yml']
+  pull_request:
+    paths: ['workflow-templates/bos-workflow-gatekeeper-kicker.yml']
+  schedule:
+    # Weekly: catches drift even when only the upstream repo changed.
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Compare against bos-workflow-gatekeeper
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PyYAML
+        run: python3 -m pip install --quiet pyyaml
+
+      - name: Diff functional shape (on / permissions / jobs)
+        run: |
+          set -euo pipefail
+          curl -fsSL \
+            "https://raw.githubusercontent.com/blackoutsecure/bos-workflow-gatekeeper/main/examples/kicker.yml" \
+            -o /tmp/upstream-kicker.yml
+          python3 - <<'PY'
+          import sys
+          import yaml
+
+          LOCAL = "workflow-templates/bos-workflow-gatekeeper-kicker.yml"
+          UPSTREAM = "/tmp/upstream-kicker.yml"
+
+          with open(LOCAL, encoding="utf-8") as handle:
+              local = yaml.safe_load(handle)
+          with open(UPSTREAM, encoding="utf-8") as handle:
+              upstream = yaml.safe_load(handle)
+
+          def section(doc, key):
+              # PyYAML's default (YAML 1.1) resolver reads a bare `on:` key as
+              # the boolean True, not the string "on" - check both so this
+              # doesn't silently skip comparing the trigger block.
+              return doc.get(key, doc.get(True) if key == "on" else None)
+
+          drifted = [key for key in ("on", "permissions", "jobs") if section(local, key) != section(upstream, key)]
+          if drifted:
+              print(
+                  f"::error file={LOCAL}::Drifted from "
+                  f"blackoutsecure/bos-workflow-gatekeeper@main:examples/kicker.yml "
+                  f"in: {', '.join(drifted)}. Header comments may differ "
+                  "intentionally; on/permissions/jobs should not."
+              )
+              sys.exit(1)
+          print(f"{LOCAL} matches the functional shape of examples/kicker.yml upstream.")
+          PY

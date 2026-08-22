@@ -1,0 +1,5 @@
+{
+  "name": "Blackout Secure Kicker",
+  "description": "workflow_dispatch front door: authorize with bos-workflow-gatekeeper, allowlist-narrow the requested operation, and route to a backend workflow.",
+  "categories": ["Deployment", "Utilities"]
+}

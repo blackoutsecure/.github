@@ -1,0 +1,87 @@
+# Org starter workflow: a single workflow_dispatch front door that
+# authorizes the actor via the published bos-workflow-gatekeeper Marketplace
+# action, optionally narrows which operations are enabled via a config file,
+# and routes each operation to its own backend workflow_call target.
+#
+# Kept functionally identical (on/permissions/jobs) to the upstream source
+# of truth at https://github.com/blackoutsecure/bos-workflow-gatekeeper
+# (examples/kicker.yml) — only this header comment and the two docs links
+# below are org-template-specific. `check-kicker-template-sync.yml` fails CI
+# if the two drift apart; update both together.
+#
+# See https://github.com/blackoutsecure/bos-workflow-gatekeeper for the full
+# write-up ("Recommended kicker workflow template" in its README) and
+# https://github.com/blackoutsecure/bos-workflow-gatekeeper/blob/main/examples/kicker-policy.json
+# for the paired allowlist config example.
+#
+# After adding this workflow, rename the job/operation names, replace
+# `deploy`/`maintenance` with your own operations, and point each backend job
+# at your own reusable `workflow_call` workflow.
+name: Kicker
+
+run-name: Kicker / ${{ inputs.operation }} / by @${{ github.triggering_actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Which pipeline to run.
+        required: true
+        type: choice
+        options: [deploy, maintenance]
+        default: deploy
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kicker-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  authorize:
+    name: Authorize dispatch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # Short-lived installation token, preferred over a long-lived PAT.
+      - uses: actions/create-github-app-token@v3
+        id: token
+        with:
+          app-id: ${{ vars.GATEKEEPER_APP_ID }}
+          private-key: ${{ secrets.GATEKEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - uses: blackoutsecure/bos-workflow-gatekeeper@v1
+        with:
+          actor: ${{ github.triggering_actor }}
+          organization: ${{ github.repository_owner }}
+          required_teams: release-managers
+          token: ${{ steps.token.outputs.token }}
+          # Narrows `operation` against a config file without editing this
+          # workflow — e.g. temporarily disable `deploy` during an incident
+          # by removing it from .github/kicker-policy.json, no redeploy of
+          # this file needed. Missing file/key fails OPEN (unrestricted);
+          # see "Config-driven allowlists" in the README.
+          allowlist_config_path: .github/kicker-policy.json
+          allowlist_config_key: kicker.enabled_operations
+          allowlist_value: ${{ inputs.operation }}
+
+  deploy:
+    name: Deploy
+    needs: authorize
+    if: inputs.operation == 'deploy'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+
+  maintenance:
+    name: Maintenance
+    needs: authorize
+    if: inputs.operation == 'maintenance'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/maintenance.yml
+    secrets: inherit

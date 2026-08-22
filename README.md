@@ -16,6 +16,7 @@ repo in the org that does NOT supply its own version.
 | `.github/ISSUE_TEMPLATE/`              | Default bug + feature-request templates + config |
 | `.github/PULL_REQUEST_TEMPLATE.md`     | Default PR template                              |
 | `profile/README.md`                    | Org profile page (rendered on the org landing)   |
+| `workflow-templates/`                  | Suggested starter workflows (Actions → New workflow) — see below |
 
 These files are intentionally generic so they apply across the board
 — for public repositories, published GitHub Marketplace actions, and
@@ -46,6 +47,25 @@ itself:
 - `.github/CODEOWNERS` — code-owner rules are per-repo.
 - `LICENSE`, `NOTICE`, repo `README.md` — per-repo.
 - Branch protection, repo settings, secrets — per-repo / org config.
+
+## Starter workflows (`workflow-templates/`)
+
+[`workflow-templates/`](workflow-templates/) is a separate GitHub feature
+from the inheritance above — it does not copy anything into any repo
+automatically. Each `<name>.yml` + `<name>.properties.json` pair here shows
+up as a suggested starter under **Actions → New workflow** for every repo in
+this org; a maintainer must explicitly pick it, and it is added to that
+repo's own `.github/workflows/` as a normal, independent file from then on
+(no ongoing link back to this repo).
+
+| Template | Purpose |
+| --- | --- |
+| `bos-workflow-gatekeeper-kicker` | `workflow_dispatch` front door using the published [`bos-workflow-gatekeeper`](https://github.com/blackoutsecure/bos-workflow-gatekeeper) action: authorize, optionally allowlist-narrow the requested operation, and route to a backend `workflow_call` workflow. |
+
+Adding a new one: drop `<name>.yml` and `<name>.properties.json` in
+`workflow-templates/`. Add a matching `<name>.svg` only if you set
+`iconName` in the properties file — an `iconName` with no matching file is a
+broken reference, not merely a missing icon.
 
 ## Hygiene for this repo itself
 

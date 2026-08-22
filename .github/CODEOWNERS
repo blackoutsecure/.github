@@ -24,3 +24,7 @@
 
 # Org public profile page.
 /profile/README.md              @blackoutsecure
+
+# Starter workflows shown org-wide under Actions -> New workflow. A silent
+# edit here reaches every repo's suggestion list; require review.
+/workflow-templates/            @blackoutsecure
