@@ -2,7 +2,8 @@
 ._*
 
 # Editor / IDE noise
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 *.swo
 *~
 

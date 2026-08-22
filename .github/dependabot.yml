@@ -17,36 +17,16 @@
 version: 2
 
 updates:
-      time: "07:00"
-      timezone: Etc/UTC
-      prefix: "ci"
-      - ci
-
 # >>> managed-file-sync:dependabot_actions >>>
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+      time: "07:00"
+      timezone: "Etc/UTC"
     commit-message:
       prefix: "chore(deps)"
     labels:
       - dependencies
+      - ci
 # <<< managed-file-sync:dependabot_actions <<<
-
-# >>> managed-file-sync:dependabot_pip >>>
-  - package-ecosystem: pip
-    directory: /
-    target-branch: dev
-    schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: "Etc/UTC"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore"
-      include: scope
-    labels:
-      - dependencies
-      - python
-# <<< managed-file-sync:dependabot_pip <<<
