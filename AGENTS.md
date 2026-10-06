@@ -84,7 +84,7 @@ workflow-templates/           Starter workflows offered under Actions -> New wor
 .github/FUNDING.yml PULL_REQUEST_TEMPLATE.md ISSUE_TEMPLATE/   Org defaults. Inherited org-wide.
 .github/workflows/            Canonical Gatekeeper, two legacy callers, and the template drift check.
 .editorconfig .gitattributes .gitignore .markdownlint.yaml .yamllint.yml .shellcheckrc
-                              Local hygiene and lint config; the first three carry managed blocks.
+                              Per-repo hygiene from managed services; Markdown config is whole-file managed.
 .vscode/extensions.json       Recommended editor extensions.
 ```
 
@@ -121,8 +121,10 @@ is likewise local-only.
 Each `<name>.yml` needs a matching `<name>.properties.json`; the pair appears as a suggested
 starter under Actions -> New workflow for every repo in the org. A maintainer must pick it, and it
 is then written into that repo's `.github/workflows/` as an ordinary independent file with no
-ongoing link back here. An `iconName` in the properties file requires a matching `<name>.svg` here
-or the reference is broken.
+ongoing link back here. `iconName` may name a local SVG without its extension
+(`example-icon` means `workflow-templates/example-icon.svg`), or an Octicon such as
+`octicon smiley`, which needs no local SVG. A custom icon's name does not have to match
+the workflow template's name. See [GitHub's template metadata documentation](https://docs.github.com/en/actions/how-tos/reuse-automations/create-workflow-templates).
 
 - `bos-workflow-gatekeeper-kicker` — a `workflow_dispatch` front door that authorizes the
   triggering actor with the published `bos-workflow-gatekeeper` action, optionally narrows the
@@ -172,16 +174,18 @@ Hub-owned payloads under `bos-automation-hub/sync-files/`:
 - `.github/workflows/bos-universal-gatekeeper-kicker.yml` from `workflows/`
 - the managed `security_readme_pointer` block in `README.md`
 
-Generic dotfile services, including `common`, `lf_line_endings`, `shellcheck`, `yamllint`, and
+Generic dotfile services, including `common`, `lf_line_endings`, `markdownlint`, `shellcheck`, `yamllint`, and
 Dependabot blocks, come from the published sync action's catalogue, with hub-level overrides and
 patches where configured. Follow that catalogue to the owning source; do not assume every
-generated block has a file under the hub's `sync-files/`.
+generated block has a file under the hub's `sync-files/`. The bundled default service selection
+includes `markdownlint`, which owns `.markdownlint.yaml` in whole-file mode even though it
+has no managed-block markers.
 
 The legacy security/sync callers retain hub-managed headers but are not the canonical receiver
 selected by the current hub service list. Coordinate their maintenance or retirement with the
 hub; do not use a legacy entrypoint to bypass the canonical authorization job.
 
-Authored here: `AGENTS.md`, the non-managed prose in `README.md`, `.markdownlint.yaml`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
+Authored here: `AGENTS.md`, the non-managed prose in `README.md`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
 `.github/workflows/check-kicker-template-sync.yml`, everything under `workflow-templates/`, both
 `bos-universal-config.json` files, `bos-launchpad-config.json`, and the prose outside the managed
 blocks in `.editorconfig`, `.gitattributes`, `.gitignore`, and `.github/dependabot.yml`.
