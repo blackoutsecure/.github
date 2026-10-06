@@ -1,22 +1,24 @@
 # blackoutsecure .github
 
+[![Made by BlackoutSecure](https://img.shields.io/badge/made%20by-BlackoutSecure-1f1f1f)](https://github.com/blackoutsecure)
+
 Organization-wide community-health defaults for the blackoutsecure
 GitHub organization. Files here are inherited automatically by every
 repo in the org that does NOT supply its own version.
 
 ## What lives here
 
-| File / folder                          | Purpose                                          |
-|----------------------------------------|--------------------------------------------------|
-| `CODE_OF_CONDUCT.md`                   | Default code of conduct                          |
-| `CONTRIBUTING.md`                      | Default contribution guidance                    |
-| `SECURITY.md`                          | Default security policy + reporting flow         |
-| `SUPPORT.md`                           | Default support guidance                         |
-| `FUNDING.yml`                          | Default GitHub Sponsors / funding links          |
-| `.github/ISSUE_TEMPLATE/`              | Default bug + feature-request templates + config |
-| `.github/PULL_REQUEST_TEMPLATE.md`     | Default PR template                              |
-| `profile/README.md`                    | Org profile page (rendered on the org landing)   |
-| `workflow-templates/`                  | Suggested starter workflows (Actions → New workflow) — see below |
+| File / folder | Purpose |
+| --- | --- |
+| `CODE_OF_CONDUCT.md` | Default code of conduct |
+| `CONTRIBUTING.md` | Default contribution guidance |
+| `SECURITY.md` | Default security policy + reporting flow |
+| `SUPPORT.md` | Default support guidance |
+| `FUNDING.yml` | Default GitHub Sponsors / funding links |
+| `.github/ISSUE_TEMPLATE/` | Default bug + feature-request templates + config |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Default PR template |
+| `profile/README.md` | Org profile page (rendered on the org landing) |
+| `workflow-templates/` | Suggested starter workflows (Actions → New workflow) — see below |
 
 These files are intentionally generic so they apply across the board
 — for public repositories, published GitHub Marketplace actions, and
@@ -105,3 +107,15 @@ community-health surface):
 - Support: [SUPPORT.md](SUPPORT.md)
 - Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+<!-- >>> managed-file-sync:security_readme_pointer >>> -->
+## Security & secrets
+
+This repository is built with Blackout Secure's reusable GitHub Actions
+workflows. If you fork or self-host these workflows and need to provision
+your own credentials (GitHub App vs. PAT guidance, secret tiers, Docker
+Hub/Cloudflare/Balena setup walkthroughs), see the
+["Secrets pipelining strategy"](https://github.com/blackoutsecure/bos-automation-hub#secrets-pipelining-strategy)
+section of `bos-automation-hub`. To report a vulnerability, see
+[SECURITY.md](https://github.com/blackoutsecure/.github/blob/main/SECURITY.md).
+<!-- <<< managed-file-sync:security_readme_pointer <<< -->
