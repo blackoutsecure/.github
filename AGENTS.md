@@ -71,6 +71,7 @@ evidence of a matching template. Do not weaken the check to hide that failure.
 
 ```text
 README.md                     This repo's own docs: inheritance contract, template rules.
+AGENTS.md                     Locally authored guidance for this repository.
 CODE_OF_CONDUCT.md CONTRIBUTING.md SECURITY.md SUPPORT.md   Org defaults. Inherited org-wide.
 LICENSE                       Apache-2.0, distributed by the hub's `license_service`.
 profile/README.md             Rendered at https://github.com/blackoutsecure as the org profile.
@@ -110,7 +111,7 @@ See [GitHub's default community-health documentation](https://docs.github.com/en
 Inheritable here: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`,
 `SECURITY.md`, `SUPPORT.md`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, and
 `.github/ISSUE_TEMPLATE/`. These never inherit and must live in the consuming repo:
-`.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`, `LICENSE`, `NOTICE`, the
+`.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`, `AGENTS.md`, `LICENSE`, `NOTICE`, the
 repo `README.md`, and all repo settings, branch protection, and secrets. The hygiene config here
 is likewise local-only.
 
@@ -180,7 +181,7 @@ The legacy security/sync callers retain hub-managed headers but are not the cano
 selected by the current hub service list. Coordinate their maintenance or retirement with the
 hub; do not use a legacy entrypoint to bypass the canonical authorization job.
 
-Authored here: the non-managed prose in `README.md`, `.markdownlint.yaml`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
+Authored here: `AGENTS.md`, the non-managed prose in `README.md`, `.markdownlint.yaml`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
 `.github/workflows/check-kicker-template-sync.yml`, everything under `workflow-templates/`, both
 `bos-universal-config.json` files, `bos-launchpad-config.json`, and the prose outside the managed
 blocks in `.editorconfig`, `.gitattributes`, `.gitignore`, and `.github/dependabot.yml`.
