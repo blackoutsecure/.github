@@ -65,9 +65,11 @@ repo's own `.github/workflows/` as a normal, independent file from then on
 | `bos-workflow-gatekeeper-kicker` | `workflow_dispatch` front door using the published [`bos-workflow-gatekeeper`](https://github.com/blackoutsecure/bos-workflow-gatekeeper) action: authorize, optionally allowlist-narrow the requested operation, and route to a backend `workflow_call` workflow. |
 
 Adding a new one: drop `<name>.yml` and `<name>.properties.json` in
-`workflow-templates/`. Add a matching `<name>.svg` only if you set
-`iconName` in the properties file — an `iconName` with no matching file is a
-broken reference, not merely a missing icon.
+`workflow-templates/`. The optional `iconName` may select a local SVG
+without its extension (`example-icon` selects `example-icon.svg`) or an
+Octicon (`octicon smiley`), which needs no local file. A custom icon's
+name need not match the workflow template's name. See
+[GitHub's template metadata documentation](https://docs.github.com/en/actions/how-tos/reuse-automations/create-workflow-templates).
 
 ## Hygiene for this repo itself
 
