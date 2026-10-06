@@ -11,18 +11,18 @@ and starter workflows offered under Actions -> New workflow from `workflow-templ
 no application code here, and none should be added.
 
 The content is Markdown, YAML, and JSON: policy documents, issue and pull-request templates, lint
-configuration, two hub-managed kicker workflows, one locally-authored drift check, and one starter
-workflow template. It also dogfoods the hygiene baseline `bos-marketplace-kit` recommends to
+configuration, the canonical Gatekeeper receiver, legacy security/sync callers, one locally-authored
+drift check, and one starter workflow template. It also dogfoods the hygiene baseline `bos-marketplace-kit` recommends to
 consumers (`DP001`, `LT001`-`LT005`); that config applies to this repo only and is inherited by
-nothing. Most of the policy text is not authored here either — `bos-automation-hub` owns it under
-`sync-files/` and pushes it in through `bos-managed-file-sync-action`, via the `org_defaults`,
-`license_service`, `common`, `lf_line_endings`, `coverage_artifacts`, `shellcheck`, and `yamllint`
-services. Check [Source of truth](#source-of-truth) before editing anything.
+nothing. Most policy text is sourced from `bos-automation-hub/sync-files/` through
+`bos-managed-file-sync-action`; generic dotfile services also come from that action's bundled
+catalogue. Check [Source of truth](#source-of-truth) before editing anything.
 
 ## Commands
 
 There is no `package.json`, `pyproject.toml`, `Makefile`, or lockfile here, so no local package
-manager and no repo-defined script. Validation is invoking the linters directly.
+manager or standalone build/test runner. Workflows contain automation glue; local validation
+invokes the linters directly.
 
 ```bash
 yamllint -c .yamllint.yml .
@@ -40,24 +40,32 @@ exists because `actionlint` shells out to `shellcheck` for `run:` blocks and rea
 
 ## Validating changes
 
-- `.github/workflows/bos-universal-security-kicker.yml` (hub-managed) runs on push and pull
-  request against `main`, on `merge_group`, daily on cron, and on dispatch. It calls the hub's
+- `.github/workflows/bos-universal-gatekeeper-kicker.yml` is the installed canonical managed
+  receiver. It runs on pushes to `main` and `dev`, schedules, and manual dispatch, but not on
+  pull requests. Authorization precedes its managed sync and routed operations. Use this
+  authorized front door for new manual operations.
+- `.github/workflows/bos-universal-security-kicker.yml` is a legacy hub caller. It runs on
+  pushes and pull requests targeting both `main` and `dev`, with the workflow's documented
+  push exclusions, plus `merge_group`, daily cron, and dispatch. It calls the hub's
   `bos-universal-sync.yml` in `commit` mode, resolves a hub ref, then calls the hub's reusable
   `bos-universal-security.yml` with `config_authoritative: true`. That is the single required
-  gate: markdownlint, yamllint, actionlint, shellcheck, `bos-code-scanning-kit`, CodeQL,
-  dependency review, the canonical README header check, and the conventional-commit title check.
-- `.github/workflows/bos-universal-sync-kicker.yml` (hub-managed) reconciles managed files on a
+  gate for main-targeted changes: `security (main) / Security summary`. It aggregates applicable
+  linters, `bos-code-scanning-kit`, dependency review, README-header and PR-title checks.
+  Repository-configured CodeQL also appears in PR checks; it is not a job in that aggregate.
+- `.github/workflows/bos-universal-sync-kicker.yml` is another legacy caller. It reconciles files on a
   weekly cron, on a push touching `.github/bos-universal-config.json`, or on dispatch with
   `mode: commit|check`.
 - `.github/workflows/check-kicker-template-sync.yml` (authored here) fetches
   `blackoutsecure/bos-workflow-gatekeeper@main:examples/kicker.yml` and fails when the `on`,
   `permissions`, or `jobs` sections of `workflow-templates/bos-workflow-gatekeeper-kicker.yml`
-  differ. Header comments may differ; functional shape may not.
+  differ. Header comments may differ; functional shape may not. This is a separate online
+  comparison, not the required Security summary.
 
 Locally, narrowest first: lint the file you touched, then the whole file type, then the JSON parse
 checks if a config changed, then `actionlint` if a workflow or template changed. If you edited the
-gatekeeper template, diff it against upstream `examples/kicker.yml` yourself — the drift check is
-the only thing that catches it, and it fails the whole gate.
+starter template, verify the upstream ref/path configured by the comparison workflow before
+comparing functional sections. An unavailable upstream or HTTP 404 is a failed comparison, not
+evidence of a matching template. Do not weaken the check to hide that failure.
 
 ## Architecture
 
@@ -66,14 +74,14 @@ README.md                     This repo's own docs: inheritance contract, templa
 CODE_OF_CONDUCT.md CONTRIBUTING.md SECURITY.md SUPPORT.md   Org defaults. Inherited org-wide.
 LICENSE                       Apache-2.0, distributed by the hub's `license_service`.
 profile/README.md             Rendered at https://github.com/blackoutsecure as the org profile.
-bos-universal-config.json     Root universal config; adds a `launchpad` block disabling stages.
-bos-launchpad-config.json     Launchpad sync services (`sync_files.services`) for this repo.
+bos-universal-config.json     Legacy root config; not the active managed caller's config path.
+bos-launchpad-config.json     Historical Launchpad service configuration.
 workflow-templates/           Starter workflows offered under Actions -> New workflow.
 .github/bos-universal-config.json   The config the sync engine discovers first.
 .github/CODEOWNERS            Review owners for this repo only; CODEOWNERS never inherits.
-.github/dependabot.yml        Weekly `github-actions` bumps; managed `dependabot_actions` block.
+.github/dependabot.yml        Managed updater blocks; includes a legacy pip entry despite no Python manifest.
 .github/FUNDING.yml PULL_REQUEST_TEMPLATE.md ISSUE_TEMPLATE/   Org defaults. Inherited org-wide.
-.github/workflows/            Two hub-managed kickers plus the local template drift check.
+.github/workflows/            Canonical Gatekeeper, two legacy callers, and the template drift check.
 .editorconfig .gitattributes .gitignore .markdownlint.yaml .yamllint.yml .shellcheckrc
                               Local hygiene and lint config; the first three carry managed blocks.
 .vscode/extensions.json       Recommended editor extensions.
@@ -81,17 +89,25 @@ workflow-templates/           Starter workflows offered under Actions -> New wor
 
 ### Branch model
 
-`main` is the default branch and the only long-lived one; `git branch -a` shows `main`,
-`origin/HEAD -> origin/main`, and a pending `chore/seed-bos-universal-gatekeeper-kicker` branch.
-This repo does not use the `dev` -> `main` promote flow the code repos use, and carries no version
-tags, because nothing here is consumed by SHA or tag. Work lands on `main` through a pull request.
+`main` is the current default and long-lived branch. Create a feature branch from it and land
+changes through a pull request with the required checks and review; do not bypass them.
+This repository does not use the code repositories' `dev` -> `main` runtime promotion flow.
+Workflow declarations may support both branch names even though this repo currently uses `main`.
+Do not infer repository architecture from temporary or pending PR branches.
 
 ### Inheritance semantics
 
-GitHub applies a community health file from this repo to a sibling repo only when that repo does
-not define its own copy, at its root or under its own `.github/`. If the sibling defines one,
-GitHub uses that file verbatim and ignores the org default entirely — no merging, no field-level
-fallback, no partial inheritance. Inheritable here: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`,
+This `.github` repository must remain public for GitHub's default community-health behavior.
+For supported file types with multiple valid locations, GitHub searches the consumer's `.github/`
+directory, then its root, then `docs/`, before falling back to this repository. A repository-local
+file overrides the corresponding org default rather than merging with it.
+
+A valid local `.github/ISSUE_TEMPLATE/` template or configuration overrides the default issue
+template directory as a whole; do not assume missing individual templates will be inherited.
+Defaults are displayed by GitHub, not copied into consumers' clones or Git history.
+See [GitHub's default community-health documentation](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file).
+
+Inheritable here: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`,
 `SECURITY.md`, `SUPPORT.md`, `.github/FUNDING.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, and
 `.github/ISSUE_TEMPLATE/`. These never inherit and must live in the consuming repo:
 `.github/workflows/**`, `.github/dependabot.yml`, `.github/CODEOWNERS`, `LICENSE`, `NOTICE`, the
@@ -112,38 +128,59 @@ or the reference is broken.
   requested operation against `.github/kicker-policy.json`, and routes to a backend
   `workflow_call` workflow. It is a relayed copy of that repo's `examples/kicker.yml`; the hub's
   managed-file sync flows hub -> consumers and does not cover this shape, so
-  `check-kicker-template-sync.yml` is the guardrail instead. Change one, change both.
+  `check-kicker-template-sync.yml` is the guardrail instead. Coordinate functional changes with
+  the upstream source, and verify its current location rather than assuming the historical
+  `@main:examples/kicker.yml` path remains available.
 
 ### Org configuration
 
 `.github/bos-universal-config.json` is the repo-owned override layer the sync engine discovers
 first. It sets `general.target_repo_role` to `org-default-repo` and enables `common`,
 `lf_line_endings`, `bos_universal_gatekeeper_kicker`, and `org_defaults` in `commit` mode. Service
-lists append across tiers rather than replacing, so the hub global config at
-`bos-automation-hub/sync-files/config/managed-file-sync-global-config.json` adds `shellcheck`,
-`yamllint`, `coverage_artifacts`, `license_service`, and `security_readme_pointer` on top. The
-root `bos-universal-config.json` is a near-duplicate that also disables every launchpad stage, and
-`bos-launchpad-config.json` declares this repo's launchpad sync services.
-`bos_universal_gatekeeper_kicker` is enabled but its workflow is not present yet, which is what
-the pending seed branch is for. Precedence matches the rest of the org: bundled marketplace
-baseline, hub global config, repo config here, then any workflow input; mappings deep-merge and
-scalars replace. Change gate behaviour in the repo config, never in a kicker.
+lists normally append across tiers with duplicates removed; `use_marketplace_services: false`
+replaces inherited selections, while `disabled_services` removes services after resolution.
+The currently promoted hub global config at
+`bos-automation-hub/sync-files/config/managed-file-sync-global-config.json` selects `shellcheck`,
+`yamllint`, `coverage_artifacts`, `license_service`, `security_readme_pointer`, and
+`bos_universal_gatekeeper_kicker`. Inspect that file at the selected runtime ref when changing
+policy; do not treat an old seed branch as the current global tier.
+
+The Gatekeeper workflow is installed. The root `bos-universal-config.json` is a legacy
+near-duplicate with disabled Launchpad stages, and `bos-launchpad-config.json` is historical.
+Current callers explicitly read `.github/bos-universal-config.json`; editing a root legacy file
+does not change their configuration.
+
+Precedence is bundled Marketplace defaults, hub global config, repository config, then explicit
+workflow inputs. Scalars replace earlier values; service definitions merge by name, with a
+same-named definition replacing the inherited definition. Change repository policy in the
+active config, not in a generated receiver. Do not add a Python manifest merely to satisfy the
+legacy pip updater in this documentation-only repository.
 
 ### Source of truth
 
-Synced from `bos-automation-hub/sync-files/` and verified byte-identical to the hub source. Edit
-the hub, not the copy here:
+This is an ownership map, not a guarantee that every checkout is currently byte-identical to
+its source. Whole-file services replace their targets; block services preserve surrounding
+prose. Verify the applicable source and selected ref before editing.
+
+Hub-owned payloads under `bos-automation-hub/sync-files/`:
 
 - `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, and `.github/FUNDING.yml`
   from `community-health/`; `.github/PULL_REQUEST_TEMPLATE.md` and `.github/ISSUE_TEMPLATE/*` from
   `github-meta/`; `profile/README.md` from `org-profile/README.md`
-- `LICENSE` from `legal/LICENSE` via `license_service`; the local copy is currently reformatted and
-  will be overwritten on the next `commit`-mode sync
-- the `# >>> managed-file-sync:<service> >>>` blocks inside `.editorconfig`, `.gitattributes`,
-  `.gitignore`, `.shellcheckrc`, `.yamllint.yml`, and `.github/dependabot.yml`
-- `.github/workflows/bos-universal-security-kicker.yml` and `bos-universal-sync-kicker.yml`
+- `LICENSE` from `legal/LICENSE` via `license_service`; local formatting edits will be replaced
+- `.github/workflows/bos-universal-gatekeeper-kicker.yml` from `workflows/`
+- the managed `security_readme_pointer` block in `README.md`
 
-Authored here: `README.md`, `.markdownlint.yaml`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
+Generic dotfile services, including `common`, `lf_line_endings`, `shellcheck`, `yamllint`, and
+Dependabot blocks, come from the published sync action's catalogue, with hub-level overrides and
+patches where configured. Follow that catalogue to the owning source; do not assume every
+generated block has a file under the hub's `sync-files/`.
+
+The legacy security/sync callers retain hub-managed headers but are not the canonical receiver
+selected by the current hub service list. Coordinate their maintenance or retirement with the
+hub; do not use a legacy entrypoint to bypass the canonical authorization job.
+
+Authored here: the non-managed prose in `README.md`, `.markdownlint.yaml`, `.vscode/extensions.json`, `.github/CODEOWNERS`,
 `.github/workflows/check-kicker-template-sync.yml`, everything under `workflow-templates/`, both
 `bos-universal-config.json` files, `bos-launchpad-config.json`, and the prose outside the managed
 blocks in `.editorconfig`, `.gitattributes`, `.gitignore`, and `.github/dependabot.yml`.
@@ -155,12 +192,15 @@ Markdown wraps at roughly 72 columns in the community health files, which is why
 relaxed for admonitions, inline HTML, bare URLs, and templates starting at `H2`. YAML is two-space
 indented with LF endings, `document-start` disabled, `truthy` relaxed so a bare `on:` key does not
 fail, and a 200-column soft limit — the kickers quote it as `"on":` to sidestep the YAML 1.1
-boolean resolver. Every `uses:` in `.github/workflows/` is a 40-character commit SHA with a
-trailing version comment; inside `workflow-templates/` a readable `@v1`-style ref is deliberate,
-since that file is a starter a human copies and adapts. The canonical README header the org gate
-enforces on code repos is `# Blackout Secure <Name>` followed by
-`**Copyright © <year[-year]> Blackout Secure | Apache License 2.0**`; it does not apply to this
-repo's `README.md`, which is internal documentation rather than a published listing. Every
+boolean resolver. Remote step-level actions in active workflows are SHA-pinned with version
+comments. Hub reusable-workflow calls deliberately use literal `@main`/`@dev` routing, while
+checked-out local actions use relative paths; do not rewrite those managed references to satisfy
+a blanket pinning rule. Starter templates may use readable `@v1` examples, which must be reviewed
+and pinned as appropriate when adopted into an active consumer workflow.
+
+The Marketplace README profile requires the canonical title/copyright/license badges. This
+repository uses the generic profile instead, which still requires the `Made by BlackoutSecure`
+badge in the first 30 lines. Internal documentation is not exempt from that check. Every
 template needs its paired properties file, and the shape is small:
 
 ```json
@@ -175,12 +215,13 @@ template needs its paired properties file, and the shape is small:
 
 ### Always
 
-- Establish whether a file is hub-synced before editing it; make the change at
-  `bos-automation-hub/sync-files/` when it is.
+- Establish the owning service before editing a generated file. Change hub payloads at
+  `bos-automation-hub/sync-files/`, or the published action's catalogue for its bundled services.
 - Keep `.yml` and `.properties.json` paired for every template, and update the template and
   `bos-workflow-gatekeeper`'s `examples/kicker.yml` together.
 - Run `yamllint`, `markdownlint-cli2`, `actionlint`, and the JSON parse checks on what you changed.
-- Pin every `uses:` in `.github/workflows/` to a commit SHA with a trailing version comment.
+- Pin new remote step-level actions to a full commit SHA with a version comment; preserve
+  intentional hub workflow branch refs and relative local-action calls.
 - Keep policy text generic enough to apply org-wide; repo-specific process belongs in that repo.
 
 ### Ask first
@@ -191,8 +232,8 @@ template needs its paired properties file, and the shape is small:
 - Changing `profile/README.md`. It is the public organization landing page.
 - Changing a workflow template that repos have already copied. Copies are independent, so an edit
   here does not reach them and creates two divergent versions of the same starter.
-- Changing the service list, `mode`, or `target_repo_role` in either `bos-universal-config.json`,
-  or the launchpad services in `bos-launchpad-config.json`.
+- Changing the service list, `mode`, or `target_repo_role` in the active
+  `.github/bos-universal-config.json`, or migrating/removing legacy root configuration.
 - Adding a workflow to `.github/workflows/`, loosening the drift check's compared sections, or
   widening `.github/CODEOWNERS` so the inherited surface loses maintainer review.
 
@@ -201,9 +242,12 @@ template needs its paired properties file, and the shape is small:
 - Never commit secrets, tokens, private keys, certificates, internal URLs, customer data, or PII.
 - Never add application code, a backend, a build step, or a runtime dependency here. This repo is
   documentation and configuration only.
-- Never use an unpinned `uses:` reference in `.github/workflows/`.
+- Never introduce mutable refs for third-party actions in active workflows. Do not replace
+  intentional hub-managed `@main`/`@dev` workflow refs or relative action paths.
 - Never edit a file synced from the hub, or text inside a `# >>> managed-file-sync:<service> >>>`
   block; the next sync run overwrites it. Edit the hub source instead.
 - Never push directly to `main`; land changes through a pull request so the security gate runs.
 - Never weaken or disable a check to get a green run, and never assume a sibling repo picks up a
   change here when that repo already ships its own copy of the file.
+- Never report a skipped check as passed, bypass required approvals, or use an unguarded legacy
+  caller to evade the canonical authorization boundary.
