@@ -64,6 +64,11 @@ repo's own `.github/workflows/` as a normal, independent file from then on
 | --- | --- |
 | `bos-workflow-gatekeeper-kicker` | `workflow_dispatch` front door using the published [`bos-workflow-gatekeeper`](https://github.com/blackoutsecure/bos-workflow-gatekeeper) action: authorize, optionally allowlist-narrow the requested operation, and route to a backend `workflow_call` workflow. |
 
+The template drift check compares its triggers, permissions, and jobs with
+[`examples/kicker.yml` on the source repository's `dev` branch](https://github.com/blackoutsecure/bos-workflow-gatekeeper/blob/dev/examples/kicker.yml).
+The promoted `main` artifact does not include examples. Changes to the
+comparison workflow itself also run the check.
+
 Adding a new one: drop `<name>.yml` and `<name>.properties.json` in
 `workflow-templates/`. The optional `iconName` may select a local SVG
 without its extension (`example-icon` selects `example-icon.svg`) or an
