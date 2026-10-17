@@ -56,7 +56,7 @@ exists because `actionlint` shells out to `shellcheck` for `run:` blocks and rea
   weekly cron, on a push touching `.github/bos-universal-config.json`, or on dispatch with
   `mode: commit|check`.
 - `.github/workflows/check-kicker-template-sync.yml` (authored here) fetches
-  `blackoutsecure/bos-workflow-gatekeeper@main:examples/kicker.yml` and fails when the `on`,
+  `blackoutsecure/bos-workflow-gatekeeper@dev:examples/kicker.yml` and fails when the `on`,
   `permissions`, or `jobs` sections of `workflow-templates/bos-workflow-gatekeeper-kicker.yml`
   differ. Header comments may differ; functional shape may not. This is a separate online
   comparison, not the required Security summary.
@@ -132,8 +132,8 @@ the workflow template's name. See [GitHub's template metadata documentation](htt
   `workflow_call` workflow. It is a relayed copy of that repo's `examples/kicker.yml`; the hub's
   managed-file sync flows hub -> consumers and does not cover this shape, so
   `check-kicker-template-sync.yml` is the guardrail instead. Coordinate functional changes with
-  the upstream source, and verify its current location rather than assuming the historical
-  `@main:examples/kicker.yml` path remains available.
+  the upstream source; the example is authored on `dev` and omitted from the promoted `main`
+  artifact.
 
 ### Org configuration
 

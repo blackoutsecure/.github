@@ -9,6 +9,7 @@
       "lf_line_endings",
       "bos_universal_gatekeeper_kicker",
       "org_defaults"
-    ]
+    ],
+    "disabled_services": ["dependabot_pip"]
   }
 }

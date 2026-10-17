@@ -10,14 +10,19 @@
 # is the guardrail instead: it fails CI when the functional shape (`on`,
 # `permissions`, `jobs`) of the two files diverges, while still allowing the
 # header comments to differ intentionally.
+# The example is authored on dev; the promoted main artifact omits examples.
 name: Check kicker template sync
 
 on:
   push:
     branches: [main]
-    paths: ['workflow-templates/bos-workflow-gatekeeper-kicker.yml']
+    paths:
+      - 'workflow-templates/bos-workflow-gatekeeper-kicker.yml'
+      - '.github/workflows/check-kicker-template-sync.yml'
   pull_request:
-    paths: ['workflow-templates/bos-workflow-gatekeeper-kicker.yml']
+    paths:
+      - 'workflow-templates/bos-workflow-gatekeeper-kicker.yml'
+      - '.github/workflows/check-kicker-template-sync.yml'
   schedule:
     # Weekly: catches drift even when only the upstream repo changed.
     - cron: '17 5 * * 1'
@@ -37,13 +42,15 @@ jobs:
           persist-credentials: false
 
       - name: Install PyYAML
-        run: python3 -m pip install --quiet pyyaml
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pyyaml
 
       - name: Diff functional shape (on / permissions / jobs)
         run: |
           set -euo pipefail
           curl -fsSL \
-            "https://raw.githubusercontent.com/blackoutsecure/bos-workflow-gatekeeper/main/examples/kicker.yml" \
+            "https://raw.githubusercontent.com/blackoutsecure/bos-workflow-gatekeeper/dev/examples/kicker.yml" \
             -o /tmp/upstream-kicker.yml
           python3 - <<'PY'
           import sys
@@ -67,7 +74,7 @@ jobs:
           if drifted:
               print(
                   f"::error file={LOCAL}::Drifted from "
-                  f"blackoutsecure/bos-workflow-gatekeeper@main:examples/kicker.yml "
+                  f"blackoutsecure/bos-workflow-gatekeeper@dev:examples/kicker.yml "
                   f"in: {', '.join(drifted)}. Header comments may differ "
                   "intentionally; on/permissions/jobs should not."
               )
