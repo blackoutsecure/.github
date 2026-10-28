@@ -98,6 +98,45 @@ community-health surface):
 
 ## Conventions for repos in this org
 
+### Repository naming
+
+- For new original repositories, use lowercase ASCII words separated by
+  hyphens. Name the stable product or responsibility, not an incidental
+  implementation detail or a capability that is only planned.
+- Use `bos-<capability>` for shared Blackout Secure tooling and
+  `<product>-<component>` for product families. Keep useful, truthful
+  qualifiers such as `-demo`, `-poc`, `-lab`, `-site`, or `-docs`.
+- Do not add visibility prefixes such as `int-`, `private-`, or `public-`.
+  Visibility belongs in repository settings and classification documentation.
+- Preserve GitHub special names, upstream fork identities, published Actions,
+  and established package interfaces. Compatibility is more important than
+  cosmetic uniformity; existing exceptions do not require a mass rename.
+- Keep the About description accurate about purpose and implementation status.
+  Empty or scaffold-only repositories must not advertise planned features as
+  working software. Do not use workstation paths as descriptions.
+
+Before renaming an existing repository:
+
+1. Verify ownership, target availability, and consumers on maintained branches.
+   Include Actions and reusable workflows, module imports, Git dependencies,
+   submodules, release URLs, and managed configuration sources.
+2. Verify deployment and trust bindings, Pages/project-site URLs, app
+   integrations, and repository-name authorization guards. Merge required
+   compatibility changes through the normal checks and human review first.
+3. Keep package names, CLI commands, image names, fleets, infrastructure state
+   keys, domains, and visibility unchanged unless separately approved.
+4. Verify the same repository ID, access classification, default branch, Git
+   access, and real affected consumers after the rename. Update canonical
+   references and local remotes; never recreate the old slug.
+
+GitHub redirects repository web and Git access, but **does not redirect Action
+calls**, and project-site URLs are an exception. See
+[GitHub's rename guidance](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository).
+An unresolved import, deployment, trust, or authorization dependency is a reason
+to hold a rename, not to weaken a control.
+
+### Repository practices
+
 - Prefer the inherited defaults. Override locally only when a repo
   genuinely needs a different policy (e.g. a CONTRIBUTING.md that
   documents a repo-specific release flow).
