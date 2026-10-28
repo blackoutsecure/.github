@@ -103,8 +103,16 @@ community-health surface):
 - For new original repositories, use lowercase ASCII words separated by
   hyphens. Name the stable product or responsibility, not an incidental
   implementation detail or a capability that is only planned.
-- Use `bos-<capability>` for shared Blackout Secure tooling and
-  `<product>-<component>` for product families. Keep useful, truthful
+- Keep `bos-` for published or deliberately Marketplace-facing GitHub
+  Actions when that branding is useful. Verify a live listing before
+  calling an Action published; an `action.yml` file alone is not proof.
+- Ordinary apps, CLIs, services, toolkits and instruction libraries should
+  use product/responsibility names without `bos-` by default. A possible
+  future Action wrapper alone is not a reason to keep the prefix.
+- A clearly branded Marketplace companion demo may keep the family prefix.
+  Document non-Marketplace compatibility exceptions for existing Action,
+  workflow or publisher interfaces instead of blindly renaming them.
+- Use `<product>-<component>` for product families. Keep useful, truthful
   qualifiers such as `-demo`, `-poc`, `-lab`, `-site`, or `-docs`.
 - Do not add visibility prefixes such as `int-`, `private-`, or `public-`.
   Visibility belongs in repository settings and classification documentation.
